@@ -2,11 +2,12 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic.detail import DetailView
 from .models import Book  # ✅ this line is necessary for the check
 from .models import Library  # ✅ this line is necessary for the check
+from .models import UserProfile  # ✅ this line is necessary for the check
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 # Function-based view
 def list_books(request):
@@ -47,3 +48,26 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return render(request, 'relationship_app/logout.html')
+
+# Role check helpers
+def is_admin(user):
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
+
+def is_librarian(user):
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
+
+def is_member(user):
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
+
+# Views
+@user_passes_test(is_admin)
+def admin_view(request):
+    return render(request, "relationship_app/admin_view.html")
+
+@user_passes_test(is_librarian)
+def librarian_view(request):
+    return render(request, "relationship_app/librarian_view.html")
+
+@user_passes_test(is_member)
+def member_view(request):
+    return render(request, "relationship_app/member_view.html")
