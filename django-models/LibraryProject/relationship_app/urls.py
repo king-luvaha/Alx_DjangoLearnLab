@@ -5,6 +5,10 @@ from .views import list_books, LibraryDetailView, register  # ✅ literal import
 from .views import admin_view
 from .views import librarian_view
 from .views import member_view
+from .views import add_book
+from .views import edit_book
+from .views import delete_book
+
 
 
 urlpatterns = [
@@ -18,5 +22,8 @@ urlpatterns = [
     path("admin-only/", admin_view, name="admin_view"),
     path("librarian-only/", librarian_view, name="librarian_view"),
     path("member-only/", member_view, name="member_view"),
+    path("books/add/", add_book, name="add_book"),
+    path("books/<int:book_id>/edit/", edit_book, name="edit_book"),
+    path("books/<int:book_id>/delete/", delete_book, name="delete_book"),
 
 ]

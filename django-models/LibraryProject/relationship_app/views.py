@@ -9,6 +9,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import permission_required
+from django.http import HttpResponse
+
 
 # Function-based view
 def list_books(request):
@@ -49,6 +52,22 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return render(request, 'relationship_app/logout.html')
+
+# Add Book View
+@permission_required('relationship_app.can_add_book', raise_exception=True)
+def add_book(request):
+    return HttpResponse("Add book view - permission required.")
+
+# Edit Book View
+@permission_required('relationship_app.can_change_book', raise_exception=True)
+def edit_book(request, book_id):
+    return HttpResponse(f"Edit book {book_id} - permission required.")
+
+# Delete Book View
+@permission_required('relationship_app.can_delete_book', raise_exception=True)
+def delete_book(request, book_id):
+    return HttpResponse(f"Delete book {book_id} - permission required.")
+
 
 # Role check helpers
 def is_admin(user):
