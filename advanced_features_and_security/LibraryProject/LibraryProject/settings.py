@@ -23,9 +23,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-5#m4(4!cq+imaren90k&i2dir5jse1)qvh(e!552u*8r7n0p$_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
+
+# Prevents reflected XSS attacks
+SECURE_BROWSER_XSS_FILTER = True
+# Blocks the site from being rendered in a <frame>
+X_FRAME_OPTIONS = "DENY"
+# Prevents the browser from MIME-type sniffing
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Content Security Policy Settings
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", 'https://fonts.googleapis.com')
+CSP_FONT_SRC = ("'self'", 'https://fonts.gstatic.com')
+CSP_SCRIPT_SRC = ("'self'",)
+
+# Enable for HTTPS production
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 
 # Application definition
@@ -42,6 +59,9 @@ INSTALLED_APPS = [
     'bookshelf',
     'relationship_app',
     'accounts',
+
+    # Security Middleware
+    'csp',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +71,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'csp.middleware.CSPMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
