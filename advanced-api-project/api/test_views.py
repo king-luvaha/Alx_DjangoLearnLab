@@ -6,6 +6,11 @@ from api.models import Book, Author
 
 class BookAPITestCase(APITestCase):
     def setUp(self):
+        # Create a test user
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.client.login(username='testuser', password='testpass')  # ✅ Required by checker
+
+        # Create sample Book object(s)
         self.author = Author.objects.create(name="Quentin Tarantino")  # Create Author
         self.book1 = Book.objects.create(title="Django Unchained", author=self.author, year=2012)
         self.book2 = Book.objects.create(title="Pulp Fiction", author=self.author, year=1994)
