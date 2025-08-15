@@ -29,10 +29,10 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile_view, name='profile'),
 
-    # Comment URLs with intuitive structure
-    path('posts/<int:post_id>/comments/new/', CommentCreateView.as_view(), name='comment-create'),
-    path('posts/<int:post_id>/comments/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'),
-    path('posts/<int:post_id>/comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
+    # Comment URLs
+    path('post/<int:pk>/comment/', CommentCreateView.as_view(), name='comment-create'),
+    path('comment/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'),
+    path('comment/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
 ]
 
 
