@@ -127,7 +127,7 @@ class CommentCreateView(LoginRequiredMixin, FormView):
     template_name = 'blog/post_detail.html'  # We'll use the post detail template
     
     def form_valid(self, form):
-        post = get_object_or_404(Post, pk=self.kwargs['post_id'])
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
         comment = form.save(commit=False)
         comment.post = post
         comment.author = self.request.user
@@ -135,7 +135,7 @@ class CommentCreateView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
     
     def get_success_url(self):
-        return reverse_lazy('post-detail', kwargs={'pk': self.kwargs['post_id']})
+        return reverse_lazy('post-detail', kwargs={'pk': self.kwargs['pk']})
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
