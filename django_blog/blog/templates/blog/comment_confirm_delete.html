@@ -1,0 +1,24 @@
+{% extends "blog/base.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Delete Comment</legend>
+                <h4>Are you sure you want to delete this comment?</h4>
+                <blockquote class="blockquote">
+                    <p class="mb-0">{{ object.content }}</p>
+                    <footer class="blockquote-footer">
+                        {{ object.author.username }} on 
+                        <cite title="Post Title">{{ object.post.title }}</cite>
+                    </footer>
+                </blockquote>
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-danger" type="submit">Yes, Delete</button>
+                <a class="btn btn-outline-secondary" 
+                   href="{% url 'post-detail' object.post.pk %}">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

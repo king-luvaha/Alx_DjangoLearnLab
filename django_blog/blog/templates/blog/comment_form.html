@@ -1,0 +1,21 @@
+{% extends "blog/base.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">
+                    {% if object %}Edit Comment{% else %}New Comment{% endif %}
+                </legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Submit</button>
+                <a class="btn btn-outline-secondary" 
+                   href="{% if object %}{% url 'post-detail' object.post.pk %}{% else %}{% url 'blog-home' %}{% endif %}">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -17,4 +17,53 @@
             <p class="article-content">{{ object.content }}</p>
         </div>
     </article>
+
+    <!-- Comments section -->
+    <div class="comments-section">
+        <h3>Comments ({{ comments.count }})</h3>
+        
+        {% if user.is_authenticated %}
+        <div class="comment-form mb-4">
+            <h4>Add a comment</h4>
+            <form method="POST">
+                {% csrf_token %}
+                {{ comment_form|crispy }}
+                <button class="btn btn-info btn-sm" type="submit">Submit</button>
+            </form>
+        </div>
+        {% else %}
+        <p><a href="{% url 'login' %}">Log in</a> to leave a comment</p>
+        {% endif %}
+
+        {% for comment in comments %}
+        <div class="comment media mb-3">
+            <img class="rounded-circle comment-img" src="{{ comment.author.profile.image.url }}">
+            <div class="media-body">
+                <div class="comment-header">
+                    <a class="comment-author" href="{% url 'user-posts' comment.author.username %}">
+                        {{ comment.author.username }}
+                    </a>
+                    <small class="comment-date text-muted">
+                        {{ comment.created_at|date:"F d, Y" }}
+                        {% if comment.created_at != comment.updated_at %}
+                            (edited)
+                        {% endif %}
+                    </small>
+                </div>
+                <p class="comment-content">{{ comment.content }}</p>
+                {% if comment.author == user %}
+                <div class="comment-actions">
+                    <a class="btn btn-outline-secondary btn-sm" 
+                       href="{% url 'comment-update' comment.id %}">Edit</a>
+                    <a class="btn btn-outline-danger btn-sm" 
+                       href="{% url 'comment-delete' comment.id %}">Delete</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p>No comments yet. Be the first to comment!</p>
+        {% endfor %}
+        <small class="text-muted">{{ post.comment_count }} comments</small>
+    </div>
 {% endblock content %}
