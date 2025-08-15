@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x45zw*8=!5kv($*lvpi4m$&kto*hdw-+8#p0okp-yglw0pxfs@'
+SECRET_KEY = 'django-insecure-kvf@cu))k)5jl$2_!+oyw3dsi6dfhbevrja7kld0^r#+jecd@7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -55,7 +56,7 @@ ROOT_URLCONF = 'django_blog.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'blog/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,17 +77,13 @@ WSGI_APPLICATION = 'django_blog.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_blog_db',       # database name
-        'USER': 'root',                 # your MySQL username
-        'PASSWORD': 'luvaha@2025',    # your MySQL password
-        'HOST': 'localhost',            # or 127.0.0.1
-        'PORT': '3308',                  # default MySQL port
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-        }
+        'NAME': 'django_blog_db',
+        'USER': 'root',        # your MySQL username
+        'PASSWORD': 'luvaha@2025',
+        'HOST': 'localhost',   # or '127.0.0.1'
+        'PORT': '3308',        # default MySQL port
     }
 }
-
 
 
 # Password validation
@@ -124,6 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'blog/static')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
