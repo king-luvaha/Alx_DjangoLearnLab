@@ -25,7 +25,7 @@
         {% if user.is_authenticated %}
         <div class="comment-form mb-4">
             <h4>Add a comment</h4>
-            <form method="POST" action="{% url 'comment-create' post.pk %}">
+            <form method="POST" action="{% url 'comment-create' post.id %}">
                 {% csrf_token %}
                 {{ comment_form|crispy }}
                 <button class="btn btn-info btn-sm" type="submit">Submit</button>
