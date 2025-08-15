@@ -2,17 +2,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>{% block title %}Auth Page{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'blog/css/auth.css' %}">
 </head>
 <body>
 <div class="container">
-    <h2>Login</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
-    </form>
+    <h2>{% block heading %}Authentication{% endblock %}</h2>
+    {% block content %}{% endblock %}
 </div>
 </body>
 </html>
