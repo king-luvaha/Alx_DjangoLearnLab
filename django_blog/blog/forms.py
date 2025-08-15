@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Post
 from .models import Comment
+from taggit.forms import TagWidget, TagField
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -27,17 +28,35 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = ['username', 'email', 'bio']
 
 class PostForm(forms.ModelForm):
+    tags = TagField(
+        widget=TagWidget(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter tags separated by commas',
+            'data-role': 'tagsinput'  # For Bootstrap tags input if you're using it
+        }),
+        required=False,
+        help_text="Separate tags with commas"
+    )
+
     class Meta:
         model = Post
-        fields = ['title', 'content']
+        fields = ['title', 'content', 'tags']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'content': forms.Textarea(attrs={'class': 'form-control'}),
-            'tags': forms.TextInput(attrs={
+            'title': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter tags separated by commas'
+                'placeholder': 'Enter post title'
+            }),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 8,
+                'placeholder': 'Write your post content here...'
             }),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields['tags'].initial = self.instance.tags.all()
 
 
 class CommentForm(forms.ModelForm):
