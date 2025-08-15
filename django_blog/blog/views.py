@@ -16,6 +16,8 @@ from .models import Post
 from .models import Comment
 from .forms import RegisterForm, ProfileUpdateForm
 from .forms import CommentForm
+from django.views.generic.edit import FormView
+from django.urls import reverse_lazy
 
 # Authentication Views
 def register_view(request):
@@ -83,26 +85,10 @@ class UserPostListView(ListView):
 def post_detail_view(request, pk):
     post = get_object_or_404(Post, pk=pk)
     comments = post.comments.all()
-    new_comment = None
-    
-    if request.method == 'POST':
-        comment_form = CommentForm(data=request.POST)
-        if comment_form.is_valid() and request.user.is_authenticated:
-            new_comment = comment_form.save(commit=False)
-            new_comment.post = post
-            new_comment.author = request.user
-            new_comment.save()
-            return redirect(post.get_absolute_url())
-    else:
-        comment_form = CommentForm()
-    
-    context = {
+    return render(request, 'blog/post_detail.html', {
         'post': post,
         'comments': comments,
-        'new_comment': new_comment,
-        'comment_form': comment_form,
-    }
-    return render(request, 'blog/post_detail.html', context)
+    })
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
@@ -136,6 +122,26 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == post.author
 
 # Comment Views
+class CommentCreateView(LoginRequiredMixin, FormView):
+    form_class = CommentForm
+    template_name = 'blog/post_detail.html'  # We'll use the post detail template
+    
+    def form_valid(self, form):
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.author = self.request.user
+        comment.save()
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.kwargs['pk']})
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post'] = get_object_or_404(Post, pk=self.kwargs['pk'])
+        return context
+
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
     form_class = CommentForm
