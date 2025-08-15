@@ -18,6 +18,8 @@ from .forms import RegisterForm, ProfileUpdateForm
 from .forms import CommentForm
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
+from django.db.models import Q
+from taggit.models import Tag
 
 # Authentication Views
 def register_view(request):
@@ -45,6 +47,32 @@ def login_view(request):
         else:
             messages.error(request, 'Invalid username or password.')
     return render(request, 'blog/login.html')
+
+def search_view(request):
+    query = request.GET.get('q')
+    tag = request.GET.get('tag')
+    
+    if tag:
+        posts = Post.objects.filter(tags__name__in=[tag])
+        context = {
+            'posts': posts,
+            'tag': tag,
+        }
+        return render(request, 'blog/search_results.html', context)
+    
+    if query:
+        posts = Post.objects.filter(
+            Q(title__icontains=query) | 
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+        context = {
+            'posts': posts,
+            'query': query,
+        }
+        return render(request, 'blog/search_results.html', context)
+    
+    return render(request, 'blog/search_results.html', {'posts': None})
 
 @login_required
 def logout_view(request):
@@ -168,3 +196,4 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('post-detail', kwargs={'pk': self.object.post.pk})
+    
