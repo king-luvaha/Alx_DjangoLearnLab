@@ -22,6 +22,11 @@
         </nav>
     </header>
     <main>
+        <form class="form-inline my-2 my-lg-0" action="{% url 'search' %}" method="GET">
+            <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search posts...">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">
@@ -32,9 +37,6 @@
         {% block content %}{% endblock %}
     </main>
 
-    <form class="form-inline my-2 my-lg-0" action="{% url 'search' %}" method="GET">
-        <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search posts...">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
+    
 </body>
 </html>

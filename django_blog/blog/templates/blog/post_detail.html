@@ -67,11 +67,11 @@
         <small class="text-muted">{{ post.comment_count }} comments</small>
     </div>
 
-    <div class="tags-section mt-3">
+    <div class="post-tags mt-3">
         {% for tag in post.tags.all %}
-            <a href="{% url 'tag-posts' tag.name %}" class="badge badge-info">
+            <a href="{% url 'posts-by-tag' tag.slug %}" class="badge badge-primary">
                 {{ tag.name }}
             </a>
         {% endfor %}
-    </div>
+</div>
 {% endblock content %}
