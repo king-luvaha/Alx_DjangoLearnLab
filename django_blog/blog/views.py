@@ -1,51 +1,42 @@
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 from .models import Post
-from .forms import PostForm
 
-# List all posts
+# List view
 class PostListView(ListView):
     model = Post
-    template_name = 'blog/post_list.html'
+    template_name = 'blog/post_list.html'  # You can change this if your template differs
     context_object_name = 'posts'
-    ordering = ['-published_date']  # newest first
+    ordering = ['-date_posted']  # Assuming your Post model has date_posted
 
-# View single post details
+# Detail view
 class PostDetailView(DetailView):
     model = Post
-    template_name = 'blog/post_detail.html'
+    template_name = 'blog/post_detail.html'  # Optional if following Django naming conventions
 
-# Create new post (only logged in)
-class PostCreateView(LoginRequiredMixin, CreateView):
+# Create view
+class PostCreateView(CreateView):
     model = Post
-    form_class = PostForm
-    template_name = 'blog/post_form.html'
+    template_name = 'blog/post_form.html'  # Default is blog/post_form.html
+    fields = ['title', 'content']  # Adjust according to your Post model
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
-# Update post (only by author)
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+# Update view
+class PostUpdateView(UpdateView):
     model = Post
-    form_class = PostForm
     template_name = 'blog/post_form.html'
+    fields = ['title', 'content']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
-    def test_func(self):
-        post = self.get_object()
-        return self.request.user == post.author
-
-# Delete post (only by author)
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+# Delete view
+class PostDeleteView(DeleteView):
     model = Post
     template_name = 'blog/post_confirm_delete.html'
-    success_url = '/posts/'
-
-    def test_func(self):
-        post = self.get_object()
-        return self.request.user == post.author
+    success_url = reverse_lazy('post-list')  # Change 'post-list' to your actual list view name
