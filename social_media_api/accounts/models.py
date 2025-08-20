@@ -10,9 +10,7 @@ class User(AbstractUser):
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(upload_to=profile_picture_upload_to, blank=True, null=True)
 
-
-    # "followers" = people who follow this user
-    # related_name="following" lets you do: user.following.all() to see who the user follows
+    # followers = people who follow this user
     followers = models.ManyToManyField(
         "self",
         symmetrical=False,
