@@ -17,6 +17,9 @@ from dotenv import load_dotenv
 
 load_dotenv()  # loads from .env
 
+# Get PORT from environment if available (default to 8000 for local dev)
+PORT = os.getenv("PORT", "8000")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
