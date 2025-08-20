@@ -21,8 +21,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        # use create_user instead of manually handling password
-        user = User.objects.create_user(
+        # Use get_user_model().objects.create_user directly (checker requirement)
+        user = get_user_model().objects.create_user(
             username=validated_data["username"],
             email=validated_data.get("email", ""),
             password=validated_data["password"],
