@@ -12,6 +12,14 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Like(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="likes")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("post", "user")  # prevent duplicate likes
 
 
 class Comment(models.Model):

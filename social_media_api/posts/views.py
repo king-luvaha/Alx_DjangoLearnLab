@@ -6,6 +6,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import generics, permissions
 from accounts.models import User as CustomUser
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import Post, Like
+from notifications.models import Notification
+from django.contrib.contenttypes.models import ContentType
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -51,3 +57,25 @@ def feed(request):
     posts = Post.objects.filter(author__in=followed_users).order_by("-created_at")
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
+
+@login_required
+def like_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    like, created = Like.objects.get_or_create(post=post, user=request.user)
+    if created:
+        # create notification for post author
+        if post.author != request.user:
+            Notification.objects.create(
+                recipient=post.author,
+                actor=request.user,
+                verb="liked your post",
+                content_type=ContentType.objects.get_for_model(post),
+                object_id=post.id,
+            )
+    return JsonResponse({"status": "liked"})
+
+@login_required
+def unlike_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    Like.objects.filter(post=post, user=request.user).delete()
+    return JsonResponse({"status": "unliked"})
