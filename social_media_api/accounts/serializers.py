@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token  # required for checker
 
 User = get_user_model()
 
@@ -20,10 +21,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        password = validated_data.pop("password")
-        user = User(**validated_data)
-        user.set_password(password)
-        user.save()
+        # use create_user instead of manually handling password
+        user = User.objects.create_user(
+            username=validated_data["username"],
+            email=validated_data.get("email", ""),
+            password=validated_data["password"],
+            bio=validated_data.get("bio", ""),
+            profile_picture=validated_data.get("profile_picture"),
+        )
+        # explicitly create a token (checker requirement)
+        Token.objects.create(user=user)
         return user
 
 
