@@ -8,14 +8,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics, permissions, status
 
-from accounts.models import User as CustomUser
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.contenttypes.models import ContentType
 
+from accounts.models import User as CustomUser
 from notifications.models import Notification
-from notifications.models import Notification
+
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
